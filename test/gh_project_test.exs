@@ -1,8 +1,20 @@
 defmodule GhProjectTest do
   use ExUnit.Case
   doctest GhProject
+  doctest GhProject.CLI
+  
+  import GhProject.CLI, only: [ parse_args: 1 ]
 
-  test "greets the world" do
-    assert GhProject.hello() == :world
+  test ":help returned by option parsing with -h and --help options" do
+    assert parse_args(["-h", "anything"]) == :help
+    assert parse_args(["--help", "anything"]) == :help
+  end
+  
+  test "three values returned if three given" do
+    assert parse_args(["user", "project", "99"]) == {"user", "project", 99}
+  end
+
+  test "count is defaulted if two values is given" do
+    assert parse_args(["user", "project"]) == {"user", "project", 4}
   end
 end
